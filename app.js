@@ -1,54 +1,46 @@
 const express = require('express');
-const path = require('path');
-const userRouter = require('./routes/user.routes');
-const taskRoutes = require("./routes/taskRoutes");
-
+const path = require('path'); // Keep path for now, but not actively used
 const dotenv = require('dotenv');
-const cors = require('cors');
-const connectToDB = require('./config/db'); // Assuming this file exists and connects to MongoDB
-const cookieParser = require('cookie-parser');
+const cors = require('cors'); // Keep cors, but its options might be simplified
 
-// Load environment variables from .env file
+// Load environment variables
 dotenv.config();
 
-// Connect to MongoDB
+// Connect to MongoDB (we'll keep this as it's critical, but if this causes issues, we can comment it out too)
+const connectToDB = require('./config/db');
 connectToDB();
 
 const app = express();
 
-// Set view engine (not strictly necessary for a MERN stack if not rendering server-side views)
-app.set('view engine', 'ejs');
+// Basic Middleware (keep these as they are standard)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Middleware
-app.use(cookieParser()); // To parse cookies from incoming requests
-app.use(express.json()); // To parse JSON bodies from incoming requests
-app.use(express.urlencoded({ extended: true })); // To parse URL-encoded bodies
+// Basic CORS to allow testing from anywhere for now
+app.use(cors()); // Simplified CORS just for testing startup
 
-// CORS Configuration
-// Frontend is at http://localhost:5173, Backend is at http://localhost:3000
-const corsOptions = {
-    origin: "http://localhost:5173", // <--- CORRECTED: This matches your frontend's exact URL
-    credentials: true, // Allows sending and receiving cookies (important for auth)
-};
-app.use(cors(corsOptions));
-
-
-// Routes
-app.use('/user', userRouter); // Authentication routes (register, login)
-app.use('/api/tasks', taskRoutes); // Task CRUD routes
-
-console.log('Connecting to:', process.env.MONGO_URI || 'MONGODB_URI not set in .env'); // Added a fallback message
-
-// Serve frontend in production (this block is for deployment, typically not active in development)
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, 'client/dist')));
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
-    });
-}
+// A simple test route to confirm the server starts
+app.get('/', (req, res) => {
+    res.send('Backend is running! If you see this, the core Express app started.');
+});
 
 // Start the server
-const PORT = process.env.PORT || 3000; // Use environment variable for port or default to 3000
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+// --- EVERYTHING ELSE COMMENTED OUT FOR TESTING ---
+// const userRouter = require('./routes/user.routes');
+// const taskRoutes = require("./routes/taskRoutes");
+// const cookieParser = require('cookie-parser');
+// app.set('view engine', 'ejs');
+// app.use(cookieParser());
+// app.use('/user', userRouter);
+// app.use('/api/tasks', taskRoutes);
+// if (process.env.NODE_ENV === 'production') {
+//     app.use(express.static(path.join(__dirname, 'client/dist')));
+//     app.get('*', (req, res) => {
+//         res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+//     });
+// }

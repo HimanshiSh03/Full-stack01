@@ -1,12 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const userModel = require("../models/user.model");
+const userModel = require("../models/user.model"); // Ensure this path is correct
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-// Render Register Page
+// Render Register Page (Frontend handles rendering, these might not be needed if it's a pure API backend)
 router.get("/register", (req, res) => {
-  res.render("register");
+  res.render("register"); // This assumes you have EJS setup and actual EJS files
 });
 
 // Register Handler
@@ -29,13 +29,14 @@ router.post("/register", async (req, res) => {
 
     res.status(201).json({ message: "User registered successfully", user: newUser });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Registration error:", err.message); // Added console.error for server logs
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// Render Login Page
+// Render Login Page (Frontend handles rendering, these might not be needed if it's a pure API backend)
 router.get("/login", (req, res) => {
-  res.render("login");
+  res.render("login"); // This assumes you have EJS setup and actual EJS files
 });
 
 // Login Handler
@@ -59,8 +60,8 @@ router.post("/login", async (req, res) => {
     // Set token as cookie (can be accessed by frontend)
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Lax",
+      secure: process.env.NODE_ENV === "production", // Set to true in production for HTTPS
+      sameSite: "Lax", // Or 'None' if cross-site and secure is true
     });
 
     res.status(200).json({ message: "Login successful", token });

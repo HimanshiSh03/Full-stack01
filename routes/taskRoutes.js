@@ -1,18 +1,38 @@
 // routes/taskRoutes.js
 const express = require("express");
-const Task = require("../models/Task"); // This import will now correctly get the Task model
+const Task = require("../models/Task");
 
 const router = express.Router();
+
+// Define column names for validation
+const COLUMN_NAMES = ["Todo", "In Progress", "Done"];
 
 // POST /api/tasks - Add a new task
 router.post("/", async (req, res) => {
   try {
-    const task = new Task(req.body); // Create a new Task instance from request body
-    await task.save(); // Save the task to the database
-    res.status(201).json(task); // Respond with the created task and 201 status
+    const { title, status, description, assignedUser, priority } = req.body;
+
+    // Basic Validation: Title must not be empty
+    if (!title || title.trim() === '') {
+        return res.status(400).json({ message: "Task title cannot be empty." });
+    }
+
+    // Validation: Title must not match column names
+    if (COLUMN_NAMES.includes(title.trim())) {
+      return res.status(400).json({ message: "Task title cannot be a column name." });
+    }
+
+    // Validation: Title must be unique per board (assuming one board, check across all tasks)
+    const existingTask = await Task.findOne({ title: title.trim() });
+    if (existingTask) {
+      return res.status(400).json({ message: "Task title must be unique." });
+    }
+
+    const task = new Task({ title, status, description, assignedUser, priority });
+    await task.save();
+    res.status(201).json(task);
   } catch (error) {
-    console.error("Error adding task:", error); // Log the error on the server side
-    // Send a 400 for client-side validation errors or a 500 for server issues
+    console.error("Error adding task:", error);
     res.status(500).json({ message: "Failed to add task", error: error.message });
   }
 });
@@ -20,8 +40,8 @@ router.post("/", async (req, res) => {
 // GET /api/tasks - Get all tasks
 router.get("/", async (req, res) => {
   try {
-    const tasks = await Task.find(); // Find all tasks
-    res.json(tasks); // Respond with the array of tasks
+    const tasks = await Task.find();
+    res.json(tasks);
   } catch (error) {
     console.error("Error fetching tasks:", error);
     res.status(500).json({ message: "Failed to fetch tasks", error: error.message });
@@ -32,7 +52,25 @@ router.get("/", async (req, res) => {
 router.patch("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    // Find and update the task, return the new document
+    const { title } = req.body;
+
+    if (title !== undefined && title.trim() === '') {
+        return res.status(400).json({ message: "Task title cannot be empty." });
+    }
+
+    // Validation: Title must not match column names (if updating title)
+    if (title && COLUMN_NAMES.includes(title.trim())) {
+      return res.status(400).json({ message: "Task title cannot be a column name." });
+    }
+
+    // Validation: Title must be unique (if updating title)
+    if (title) {
+        const existingTask = await Task.findOne({ title: title.trim(), _id: { $ne: id } });
+        if (existingTask) {
+            return res.status(400).json({ message: "Task title must be unique." });
+        }
+    }
+
     const task = await Task.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
     
     if (!task) {

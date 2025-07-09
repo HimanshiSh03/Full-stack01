@@ -1,27 +1,36 @@
 const express = require('express');
-const path = require('path'); // Keep path for now, but not actively used
+const path = require('path');
 const dotenv = require('dotenv');
-const cors = require('cors'); // Keep cors, but its options might be simplified
+const cors = require('cors');
+
+// --- UNCOMMENT THESE LINES ---
+const userRouter = require('./routes/user.routes');
+const taskRoutes = require("./routes/taskRoutes");
+// --- END UNCOMMENT ---
 
 // Load environment variables
 dotenv.config();
 
-// Connect to MongoDB (we'll keep this as it's critical, but if this causes issues, we can comment it out too)
+// Connect to MongoDB
 const connectToDB = require('./config/db');
 connectToDB();
 
 const app = express();
 
-// Basic Middleware (keep these as they are standard)
+// Basic Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors()); // Still using simplified CORS for now
 
-// Basic CORS to allow testing from anywhere for now
-app.use(cors()); // Simplified CORS just for testing startup
+// --- UNCOMMENT THESE LINES ---
+// Mount your routes
+app.use('/user', userRouter); // Authentication routes (register, login)
+app.use('/api/tasks', taskRoutes); // Task CRUD routes
+// --- END UNCOMMENT ---
 
 // A simple test route to confirm the server starts
 app.get('/', (req, res) => {
-    res.send('Backend is running! If you see this, the core Express app started.');
+    res.send('Backend is running! (Now with user/task routes enabled for testing).');
 });
 
 // Start the server
@@ -30,17 +39,14 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-// --- EVERYTHING ELSE COMMENTED OUT FOR TESTING ---
-// const userRouter = require('./routes/user.routes');
-// const taskRoutes = require("./routes/taskRoutes");
+// --- STILL COMMENTED OUT (DO NOT UNCOMMENT THESE YET) ---
 // const cookieParser = require('cookie-parser');
 // app.set('view engine', 'ejs');
-// app.use(cookieParser());
-// app.use('/user', userRouter);
-// app.use('/api/tasks', taskRoutes);
 // if (process.env.NODE_ENV === 'production') {
 //     app.use(express.static(path.join(__dirname, 'client/dist')));
 //     app.get('*', (req, res) => {
 //         res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 //     });
 // }
+// app.use(cookieParser()); // This will be uncommented later
+// const corsOptions = { ... } // Revert to this specific CORS later

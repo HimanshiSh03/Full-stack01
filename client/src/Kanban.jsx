@@ -53,7 +53,7 @@ useEffect(() => {
     if (!title) return; // Don't add empty tasks
 
     try {
-      const res = await fetch("http://localhost:3000/api/tasks", { // Consider using process.env.REACT_APP_BACKEND_URL here
+      const res = await fetch(`${API_URL}/api/tasks`, { // Consider using process.env.REACT_APP_BACKEND_URL here
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // Ensure you send description, assignedUser, priority if you add input fields for them
@@ -83,7 +83,7 @@ useEffect(() => {
   // DELETE A TASK
   const handleDeleteTask = async (id) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/tasks/${id}`, { // Consider using process.env.REACT_APP_BACKEND_URL here
+      const res = await fetch(`${API_URL}/api/tasks/${id}`, { // Consider using process.env.REACT_APP_BACKEND_URL here
         method: "DELETE",
       });
 
@@ -103,7 +103,7 @@ useEffect(() => {
     if (!editingTitle.trim()) return;
 
     try {
-      const res = await fetch(`http://localhost:3000/api/tasks/${id}`, { // Consider using process.env.REACT_APP_BACKEND_URL here
+      const res = await fetch(`${API_URL}/api/tasks/${id}`, { // Consider using process.env.REACT_APP_BACKEND_URL here
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: editingTitle }),
@@ -154,7 +154,7 @@ useEffect(() => {
     setTasks(updatedTasks);
 
     try {
-      const res = await fetch(`http://localhost:3000/api/tasks/${draggableId}`, { // Consider using process.env.REACT_APP_BACKEND_URL here
+      const res = await fetch(`${API_URL}/api/tasks/${draggableId}`, { // Consider using process.env.REACT_APP_BACKEND_URL here
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: destination.droppableId }),

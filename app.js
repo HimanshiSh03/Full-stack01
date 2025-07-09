@@ -3,9 +3,11 @@ const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
 
-// --- UNCOMMENT THESE LINES ---
 const userRouter = require('./routes/user.routes');
 const taskRoutes = require("./routes/taskRoutes");
+
+// --- UNCOMMENT THIS LINE ---
+const cookieParser = require('cookie-parser');
 // --- END UNCOMMENT ---
 
 // Load environment variables
@@ -17,20 +19,27 @@ connectToDB();
 
 const app = express();
 
-// Basic Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// --- UNCOMMENT THIS LINE ---
+// Set view engine (not strictly necessary for a MERN stack if not rendering server-side views)
+app.set('view engine', 'ejs');
+// --- END UNCOMMENT ---
+
+// Middleware
+// --- UNCOMMENT THIS LINE ---
+app.use(cookieParser()); // To parse cookies from incoming requests
+// --- END UNCOMMENT ---
+app.use(express.json()); // To parse JSON bodies from incoming requests
+app.use(express.urlencoded({ extended: true })); // To parse URL-encoded bodies
+
 app.use(cors()); // Still using simplified CORS for now
 
-// --- UNCOMMENT THESE LINES ---
-// Mount your routes
+// Routes
 app.use('/user', userRouter); // Authentication routes (register, login)
 app.use('/api/tasks', taskRoutes); // Task CRUD routes
-// --- END UNCOMMENT ---
 
 // A simple test route to confirm the server starts
 app.get('/', (req, res) => {
-    res.send('Backend is running! (Now with user/task routes enabled for testing).');
+    res.send('Backend is running! (Now with user/task routes, cookieParser, and EJS enabled for testing).');
 });
 
 // Start the server
@@ -39,14 +48,11 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-// --- STILL COMMENTED OUT (DO NOT UNCOMMENT THESE YET) ---
-// const cookieParser = require('cookie-parser');
-// app.set('view engine', 'ejs');
+// --- STILL COMMENTED OUT (DO NOT UNCOMMENT THIS YET) ---
+// The specific corsOptions object will be re-added later, after we get the frontend URL
 // if (process.env.NODE_ENV === 'production') {
 //     app.use(express.static(path.join(__dirname, 'client/dist')));
 //     app.get('*', (req, res) => {
 //         res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
 //     });
 // }
-// app.use(cookieParser()); // This will be uncommented later
-// const corsOptions = { ... } // Revert to this specific CORS later

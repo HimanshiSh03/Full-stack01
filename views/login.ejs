@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+  <body>
+    <h1 class="text-3xl font-bold" align="center">
+      WELCOME
+    </h1>
+    <br><hr><br>
+      
+<form action="/user/login" method="post" align="center">
+  <label for="username">Username</label><br>
+  <input type="text" id="username" name="username" placeholder="Enter your Username" size="50"  required><br><br>
+ 
+  <label for="password">Password</label><br>
+  <input type="password" id="password" name="password" placeholder="Enter password" size="50" minlength="4"  required><br>
+  <button>Submit</button>
+</form>
+</body>
+</html>

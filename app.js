@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true })); // To parse URL-encoded bodies
 
 // --- RE-INTRODUCING FULL CORS CONFIGURATION ---
 const corsOptions = {
-    origin: process.env.CORS_ORIGIN ||'https://frabjous-entremet-4e7e89.netlify.app/', // Will be set in Render environment variables
+    origin: process.env.CORS_ORIGIN ||'https://frabjous-entremet-4e7e89.netlify.app', // Will be set in Render environment variables
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Explicitly define allowed methods
     allowedHeaders: ['Content-Type', 'Authorization'] // Explicitly define allowed headers

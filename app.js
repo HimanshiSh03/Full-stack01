@@ -17,6 +17,14 @@ connectToDB();
 
 const app = express();
 
+const corsOptions = {
+  origin: 'https://frabjous-entremet-4e7e89.netlify.app',  // Exact URL (no trailing slash)
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
+
 
 app.set('view engine', 'ejs');
 
@@ -26,15 +34,7 @@ app.use(express.json()); // To parse JSON bodies from incoming requests
 app.use(express.urlencoded({ extended: true })); // To parse URL-encoded bodies
 
 // --- RE-INTRODUCING FULL CORS CONFIGURATION ---
-const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "https://your-netlify-site.netlify.app" 
-  ],
-  credentials: true,
-};
-app.use(cors(corsOptions));
-// --- END FULL CORS CONFIGURATION ---
+
 
 // Routes
 app.use('/user', userRouter); // Authentication routes (register, login)

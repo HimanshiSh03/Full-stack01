@@ -1,3 +1,5 @@
+const API_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:3000';
+
 import React, { useState, useEffect } from "react";
 import {
   DragDropContext,
@@ -23,23 +25,26 @@ const Kanban = () => {
   const [editingTitle, setEditingTitle] = useState("");
 
   // FETCH ALL TASKS ON COMPONENT MOUNT
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/api/tasks"); // Consider using process.env.REACT_APP_BACKEND_URL here
-        if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(`HTTP error! Status: ${res.status}, Message: ${errorData.message || 'Unknown error'}`);
-        }
-        const data = await res.json();
-        setTasks(data);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    };
+useEffect(() => {
+  const API_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:3000';
 
-    fetchTasks();
-  }, []);
+  const fetchTasks = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/tasks`);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(`HTTP error! Status: ${res.status}, Message: ${errorData.message || 'Unknown error'}`);
+      }
+      const data = await res.json();
+      setTasks(data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
+
+  fetchTasks();
+}, []);
+
 
   // ADD A NEW TASK FUNCTIONALITY
   const handleAddTask = async (inputId, status) => {

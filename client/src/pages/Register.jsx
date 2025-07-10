@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 const API_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:3000';
 
 const Register = () => {
@@ -36,6 +37,8 @@ const Register = () => {
   };
 
   return (
+          <>
+         
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSubmit}
@@ -75,8 +78,20 @@ const Register = () => {
         >
           Register
         </button>
+
+        <p className="text-sm mt-4">
+                Already have an account?{" "}
+          <Link to="/login" className="text-blue-600 underline">
+            Login instead
+          </Link>
+        
+        </p>
+
       </form>
+
+      
     </div>
+    </>
   );
 };
 
